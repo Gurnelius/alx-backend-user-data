@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+'''
+Module to obfuscate data from database
+'''
 import re
 import logging
 import os
@@ -12,8 +16,12 @@ def filter_datum(fields, redaction, message, separator):
     Returns the log message obfuscated
     """
     for field in fields:
-        message = re.sub(f'{field}=[^{separator}]*', f'{field}={redaction}', message)
+        message = re.sub(
+            f'{field}=[^{separator}]*',
+            f'{field}={redaction}', message
+        )
     return message
+
 
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class """
@@ -29,9 +37,11 @@ class RedactingFormatter(logging.Formatter):
 
     def format(self, record):
         '''Filter values in incoming log records'''
-        record.msg = filter_datum(self.fields, self.REDACTION, record.msg, self.SEPARATOR)
+        record.msg = filter_datum(
+            self.fields, self.REDACTION,
+            record.msg, self.SEPARATOR
+        )
         return super(RedactingFormatter, self).format(record)
-
 
 
 def get_logger():
@@ -59,6 +69,7 @@ def get_db():
         host=db_host,
         database=db_name
     )
+
 
 def main():
     """Obfuscate data from database"""
